@@ -55,14 +55,6 @@ public class ServicesStatusController {
         return "OK";
     }
 
-    public void deactivateService(String id){
-        bdWorker.deactivateService(id);
-    }
-
-    public void activateService(String id){
-        bdWorker.activateService(id);
-    }
-
     @RequestMapping("/getServices")
     public String getServices(){
         var result = new StringBuilder();
