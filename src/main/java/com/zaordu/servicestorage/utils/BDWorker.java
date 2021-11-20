@@ -1,4 +1,4 @@
-package com.zaordu.servicestorage.controllers;
+package com.zaordu.servicestorage.utils;
 import java.sql.SQLException;
 
 public class BDWorker {
@@ -10,5 +10,9 @@ public class BDWorker {
         if (instance == null)
             instance = new BDWorker();
         return instance;
+    }
+
+    public static void createService(){
+
     }
 }
