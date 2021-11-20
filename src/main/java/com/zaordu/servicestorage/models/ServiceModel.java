@@ -7,5 +7,6 @@ import java.util.UUID;
 public class ServiceModel {
     public UUID serviceId;
     public String serviceName;
-    public ServiceStatus serviceStatus;
+    public Boolean serviceStatus;
+    public String link;
 }
