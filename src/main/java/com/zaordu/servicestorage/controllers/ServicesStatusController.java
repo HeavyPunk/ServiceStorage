@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.UUID;
 
@@ -49,6 +48,18 @@ public class ServicesStatusController {
         service.serviceId = UUID.randomUUID();
         service.serviceName = "RandomService";
         service.link = "https://yandex.ru/";
+        service.serviceStatus = ServiceStatus.RUNNING;
+        bdWorker.addService(service);
+        serviceHandler.addService(service);
+        return "OK";
+    }
+
+    @RequestMapping("/addService") //TODO: Не должно быть на проде
+    public String addRandomService(@RequestParam(name = "name") String name, @RequestParam(name = "link") String link){
+        var service = new ServiceModel();
+        service.serviceId = UUID.randomUUID();
+        service.serviceName = name;
+        service.link = link;
         service.serviceStatus = ServiceStatus.RUNNING;
         bdWorker.addService(service);
         serviceHandler.addService(service);

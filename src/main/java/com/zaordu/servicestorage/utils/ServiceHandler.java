@@ -4,12 +4,17 @@ import com.zaordu.servicestorage.models.ServiceModel;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 //TODO:Добавить локкеры на services
 public class ServiceHandler implements com.zaordu.servicestorage.abstractions.ServiceHandler {
     private HashMap<UUID, ServiceModel> services = new HashMap<>();
 
     private static ServiceHandler instance = null;
+
+    private final Lock lock = new ReentrantLock();
 
     public static ServiceHandler getInstance(){
         if (instance == null)
@@ -19,15 +24,35 @@ public class ServiceHandler implements com.zaordu.servicestorage.abstractions.Se
 
     @Override
     public Set<ServiceModel> getServicesInfo() {
-        return new HashSet<>(services.values());
+        try {
+            if (lock.tryLock(10, TimeUnit.SECONDS)) {
+                return new HashSet<>(services.values());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            lock.unlock();
+        }
+        return new HashSet<>();
     }
 
     @Override
     public void setServices(List<ServiceModel> servicesList){
-        services = new HashMap<UUID, ServiceModel>();
-        for(var service : servicesList){
-            services.put(service.serviceId, service);
+        try {
+            if (lock.tryLock(10, TimeUnit.SECONDS)) {
+                services = new HashMap<UUID, ServiceModel>();
+                for (var service : servicesList) {
+                    services.put(service.serviceId, service);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        finally {
+            lock.unlock();
+        }
+
     }
 
     @Override

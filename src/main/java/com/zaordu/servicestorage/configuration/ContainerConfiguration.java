@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class ContainerConfiguration {
     @Bean
     public ServiceHandler getServiceHandler(){
-        return new com.zaordu.servicestorage.utils.ServiceHandler();
+        return com.zaordu.servicestorage.utils.ServiceHandler.getInstance();
     }
     @Bean
     public JsonManager jsonManager(){
