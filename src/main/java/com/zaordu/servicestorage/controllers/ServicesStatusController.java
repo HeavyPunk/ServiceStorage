@@ -54,6 +54,18 @@ public class ServicesStatusController {
         return "OK";
     }
 
+    @RequestMapping("/addService") //TODO: Не должно быть на проде
+    public String addRandomService(@RequestParam(name = "name") String name, @RequestParam(name = "link") String link){
+        var service = new ServiceModel();
+        service.serviceId = UUID.randomUUID();
+        service.serviceName = name;
+        service.link = link;
+        service.serviceStatus = ServiceStatus.RUNNING;
+        bdWorker.addService(service);
+        serviceHandler.addService(service);
+        return "OK";
+    }
+
     @RequestMapping("/getServices")
     public String getServices(){
         var result = new StringBuilder();
