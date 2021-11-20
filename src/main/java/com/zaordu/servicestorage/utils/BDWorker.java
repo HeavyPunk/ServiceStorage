@@ -64,6 +64,26 @@ public class BDWorker {
         }
     }
 
+    public void deactivateService(String id){
+        try (PreparedStatement statement = this.connection.prepareStatement(
+                "UPDATE services_info SET work_status = FALSE WHERE id = ?")) {
+            statement.setObject(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void activateService(String id){
+        try (PreparedStatement statement = this.connection.prepareStatement(
+                "UPDATE services_info SET work_status = TRUE WHERE id = ?")) {
+            statement.setObject(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void deleteService(String id) {
         try (PreparedStatement statement = this.connection.prepareStatement(
                 "DELETE FROM services_info WHERE id = ?")) {
@@ -72,10 +92,6 @@ public class BDWorker {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void createService(ServicesStatusController serviceController){
-        var servise = serviceController.addRandomService();
     }
 
     private boolean convertServiceStatusToBool(ServiceStatus serviceStatus){
