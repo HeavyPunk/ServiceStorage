@@ -5,9 +5,13 @@ import com.zaordu.servicestorage.abstractions.ServiceHandler;
 import com.zaordu.servicestorage.models.ServiceModel;
 import com.zaordu.servicestorage.utils.BDWorker;
 import com.zaordu.servicestorage.utils.ServiceStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.UUID;
 
@@ -28,6 +32,15 @@ public class ServicesStatusController {
     public String getStatuses(){
         var statusesInfo = serviceHandler.getServicesInfo();
         return jsonManager.serialise(statusesInfo);
+    }
+
+    @RequestMapping(value = "/getService", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getService(@RequestParam(name = "id") String id){
+        var uuid = UUID.fromString(id);
+        var service = serviceHandler.getServiceInfo(uuid);
+        if (service == null)
+            return new ResponseEntity<String>(jsonManager.serialise("Not found service: " + id) ,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<String>(jsonManager.serialise(service), HttpStatus.OK);
     }
 
     @RequestMapping("/addRandomService") //TODO: Не должно быть на проде

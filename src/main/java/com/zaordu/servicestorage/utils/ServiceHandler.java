@@ -29,4 +29,9 @@ public class ServiceHandler implements com.zaordu.servicestorage.abstractions.Se
         else
             throw new RuntimeException(String.format("Servie does not exist: uuid: %s", newModel.serviceId.toString()));
     }
+
+    @Override
+    public ServiceModel getServiceInfo(UUID id) {
+        return services.getOrDefault(id, null);
+    }
 }
