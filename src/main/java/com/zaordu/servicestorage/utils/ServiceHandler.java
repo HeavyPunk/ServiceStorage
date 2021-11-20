@@ -3,10 +3,7 @@ package com.zaordu.servicestorage.utils;
 import com.zaordu.servicestorage.models.ServiceModel;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 //TODO:Добавить локкеры на services
 public class ServiceHandler implements com.zaordu.servicestorage.abstractions.ServiceHandler {
@@ -23,6 +20,14 @@ public class ServiceHandler implements com.zaordu.servicestorage.abstractions.Se
     @Override
     public Set<ServiceModel> getServicesInfo() {
         return new HashSet<>(services.values());
+    }
+
+    @Override
+    public void setServices(List<ServiceModel> servicesList){
+        services = new HashMap<UUID, ServiceModel>();
+        for(var service : servicesList){
+            services.put(service.serviceId, service);
+        }
     }
 
     @Override

@@ -48,7 +48,7 @@ public class ServicesStatusController {
         var service = new ServiceModel();
         service.serviceId = UUID.randomUUID();
         service.serviceName = "RandomService";
-        service.link = "RandomLink";
+        service.link = "https://yandex.ru/";
         service.serviceStatus = ServiceStatus.RUNNING;
         bdWorker.addService(service);
         serviceHandler.addService(service);
@@ -58,9 +58,8 @@ public class ServicesStatusController {
     @RequestMapping("/getServices")
     public String getServices(){
         var result = new StringBuilder();
-        for(var str: bdWorker.getAllServices()) {
-            result.append(str).append(("\n"));
-        }
+        for(var service: bdWorker.getAllServices()) {
+            result.append(service.serviceId).append(" ").append(service.serviceName).append(" ").append(service.serviceStatus.toString()).append(("\n"));        }
         return result.toString();
     }
 }
