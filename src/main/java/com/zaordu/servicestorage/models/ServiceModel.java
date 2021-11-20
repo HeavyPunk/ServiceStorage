@@ -8,4 +8,5 @@ public class ServiceModel {
     public UUID serviceId;
     public String serviceName;
     public ServiceStatus serviceStatus;
+    public String link;
 }
