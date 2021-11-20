@@ -36,9 +36,22 @@ public class ServicesStatusController {
         service.serviceId = UUID.randomUUID();
         service.serviceName = "RandomService";
         service.link = "RandomLink";
-        service.serviceStatus = true;
+        service.serviceStatus = ServiceStatus.RUNNING;
         bdWorker.addService(service);
         serviceHandler.addService(service);
         return "OK";
+    }
+
+    public void deactivateService(){
+
+    }
+
+    @RequestMapping("/getServices")
+    public String getServices(){
+        var result = new StringBuilder();
+        for(var str: bdWorker.getAllServices()) {
+            result.append(str).append(("\n"));
+        }
+        return result.toString();
     }
 }

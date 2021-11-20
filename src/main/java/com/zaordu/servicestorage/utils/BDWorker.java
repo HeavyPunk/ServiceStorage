@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class BDWorker {
-    private static final String ConnectionStrDB = "jdbc:sqlite:services.db";
+    private static final String ConnectionStrDB = "jdbc:sqlite:C:\\Tools1\\PoebotaSrackaton\\ServiceStorage\\src\\services.db";
 
     private static BDWorker instance = null;
 
@@ -39,7 +39,7 @@ public class BDWorker {
                         resultSet.getString("id"),
                         resultSet.getString("name"),
                         resultSet.getString("link"),
-                        resultSet.getBoolean("work_status")));
+                        convertBoolToServiceStatus(resultSet.getBoolean("work_status"))));
             }
             return services;
 
@@ -50,13 +50,24 @@ public class BDWorker {
     }
 
     public void addService(ServiceModel service) {
-        try (PreparedStatement statement = this.connection.prepareStatement(
-                "INSERT INTO services_info(`id`, `name`, `link`, `work_status`)" +
-                        "VALUES(?, ?, ?, ?)")) {
-            statement.setObject(1, service.serviceId);
+        try
+                (PreparedStatement statement = this.connection.prepareStatement(
+                "INSERT INTO services_info (id, name, link, work_status)" +
+                        "VALUES (?, ?, ?, ?)")) {
+            statement.setObject(1, service.serviceId.toString());
             statement.setObject(2, service.serviceName);
             statement.setObject(3, service.link);
-            statement.setObject(4, service.serviceStatus);
+            statement.setObject(4, convertServiceStatusToBool(service.serviceStatus));
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteService(String id) {
+        try (PreparedStatement statement = this.connection.prepareStatement(
+                "DELETE FROM services_info WHERE id = ?")) {
+            statement.setObject(1, id);
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -65,5 +76,15 @@ public class BDWorker {
 
     public void createService(ServicesStatusController serviceController){
         var servise = serviceController.addRandomService();
+    }
+
+    private boolean convertServiceStatusToBool(ServiceStatus serviceStatus){
+        return serviceStatus == ServiceStatus.RUNNING;
+    }
+
+    private ServiceStatus convertBoolToServiceStatus(boolean status){
+        if (status)
+            return ServiceStatus.RUNNING;
+        return ServiceStatus.STOPPED;
     }
 }
