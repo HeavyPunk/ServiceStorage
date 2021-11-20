@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class BDWorker {
-    private static final String ConnectionStrDB = "jdbc:sqlite:C:\\Tools1\\PoebotaSrackaton\\ServiceStorage\\src\\services.db";
+    private static final String ConnectionStrDB = "jdbc:sqlite:src\\services.db";
 
     private static BDWorker instance = null;
 
