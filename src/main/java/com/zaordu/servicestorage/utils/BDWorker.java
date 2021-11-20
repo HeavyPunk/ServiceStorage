@@ -9,8 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class BDWorker {
-    private static final String ConnectionStrDB = "jdbc:sqlite:C:\\Tools1\\PoebotaSrackaton\\ServiceStorage\\src\\services.db";
-
+    private static final String ConnectionStrDB = "jdbc:sqlite:src\\services.db";
     private static BDWorker instance = null;
 
     public static synchronized BDWorker getInstance(){
@@ -30,16 +29,16 @@ public class BDWorker {
         this.connection = DriverManager.getConnection(ConnectionStrDB);
     }
 
-    public List<String> getAllServices() {
+    public List<ServiceModel> getAllServices() {
         try (Statement statement = this.connection.createStatement()) {
-            List<String> services = new ArrayList<String>();
+            List<ServiceModel> services = new ArrayList<ServiceModel>();
             ResultSet resultSet = statement.executeQuery("SELECT id, name, link, work_status FROM services_info");
             while (resultSet.next()) {
-                services.add(String.format("%s %s %s %s",
-                        resultSet.getString("id"),
+                var service = ServiceModelFactory.CreateService(resultSet.getString("id"),
                         resultSet.getString("name"),
                         resultSet.getString("link"),
-                        convertBoolToServiceStatus(resultSet.getBoolean("work_status"))));
+                        convertBoolToServiceStatus(resultSet.getBoolean("work_status")));
+                services.add(service);
             }
             return services;
 
@@ -50,8 +49,7 @@ public class BDWorker {
     }
 
     public void addService(ServiceModel service) {
-        try
-                (PreparedStatement statement = this.connection.prepareStatement(
+        try(PreparedStatement statement = this.connection.prepareStatement(
                 "INSERT INTO services_info (id, name, link, work_status)" +
                         "VALUES (?, ?, ?, ?)")) {
             statement.setObject(1, service.serviceId.toString());
@@ -92,6 +90,19 @@ public class BDWorker {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean containService(String id) {
+
+        try (PreparedStatement statement = this.connection.prepareStatement(
+                "SELECT id FROM services_info WHERE  id = ?")) {
+            statement.setObject(1, id);
+            var resultSet = statement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private boolean convertServiceStatusToBool(ServiceStatus serviceStatus){
