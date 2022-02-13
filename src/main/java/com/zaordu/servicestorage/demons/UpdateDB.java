@@ -5,6 +5,8 @@ import com.zaordu.servicestorage.utils.BDWorker;
 import com.zaordu.servicestorage.utils.HTTPServiceChecker;
 import com.zaordu.servicestorage.utils.ServiceStatus;
 
+import java.util.Arrays;
+
 public class UpdateDB implements Runnable{
     private final BDWorker worker = BDWorker.getInstance();
     private final ServiceHandler serviceHandler = com.zaordu.servicestorage.utils.ServiceHandler.getInstance();
@@ -13,10 +15,23 @@ public class UpdateDB implements Runnable{
     @Override
     public void run() {
         while(true) {
-            loadDataFromDB();
-            checkServices();
-            loadDataToDB();
-            updateStatusDB();
+            try {
+                loadDataFromDB();
+                checkServices();
+                loadDataToDB();
+                updateStatusDB();
+            }catch (RuntimeException e){
+                System.out.format(
+                        "Some error was risen:\n %s \n Stack trace: %s",
+                        e.getMessage(),
+                        String.join("\n", Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toArray(String[]::new))
+                );
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

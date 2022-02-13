@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class BDWorker {
-    private static final String ConnectionStrDB = "jdbc:sqlite:src\\services.db";
+    private static final String ConnectionStrDB = "jdbc:sqlite:services.db";
     private static BDWorker instance = null;
 
     public static synchronized BDWorker getInstance(){
@@ -27,6 +27,25 @@ public class BDWorker {
     public BDWorker() throws SQLException {
         DriverManager.registerDriver(new JDBC());
         this.connection = DriverManager.getConnection(ConnectionStrDB);
+        ConfigureDB();
+    }
+
+    private void ConfigureDB(){
+        try(var statement = this.connection.createStatement()){
+            statement.execute("""
+                    create table if not exists services_info
+                    (
+                        id          varchar(36),
+                        name        varchar(100),
+                        link        varchar(200),
+                        work_status int
+                    );
+                    """
+            );
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public List<ServiceModel> getAllServices() {
